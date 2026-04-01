@@ -16,10 +16,6 @@
   <img src="https://img.shields.io/badge/platform-web%20%7C%20desktop-lightgrey" />
 </p>
 
----
-
-# 🌌 NebulaOS
-
 **NebulaOS** ist ein modernes, modulares Betriebssystem-Konzept mit Fokus auf Geschwindigkeit, Flexibilität und plattformübergreifende Nutzung. Es kombiniert Prinzipien klassischer Betriebssysteme mit webbasierten Technologien und einer minimalistischen Architektur, um eine skalierbare und leistungsfähige Umgebung für verschiedenste Anwendungen bereitzustellen.
 
 ---
