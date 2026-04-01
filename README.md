@@ -82,7 +82,7 @@ NebulaOS eignet sich für:
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-repo/nebulaos.git
+git clone https://github.com/Geistvk/NebulaOS
 cd nebulaos
 npm install
 npm run start
