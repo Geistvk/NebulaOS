@@ -51,22 +51,6 @@ NebulaOS legt besonderen Wert auf:
 
 ---
 
-## 🏗️ Architecture
-+-----------------------------+
-| Applications |
-+-----------------------------+
-| System APIs |
-+-----------------------------+
-| Core Services Layer |
-+-----------------------------+
-| Kernel / Core |
-+-----------------------------+
-| Hardware / Host |
-+-----------------------------+
-- **Applications** → Benutzer- und Systemanwendungen  
-
----
-
 ## 💡 Use Cases
 
 NebulaOS eignet sich für:
