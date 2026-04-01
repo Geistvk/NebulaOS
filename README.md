@@ -3,10 +3,6 @@
   <img src="https://readme-typing-svg.herokuapp.com?size=30&duration=3000&color=7F00FF&center=true&vCenter=true&width=600&lines=NebulaOS;Modular+Operating+System;Fast+%7C+Flexible+%7C+Future" />
 </p>
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=YOURNAME&show_icons=true&theme=tokyonight" />
-</p>
-
 <h1 align="center">🌌 NebulaOS</h1>
 
 <p align="center">
