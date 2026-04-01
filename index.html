@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula OS</title>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(155, 155, 155);
+        }
+        .phoneBody {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30%;
+            height: 90%;
+            overflow: visible;
+            filter: drop-shadow(black 30px 30px 50px);
+            transition: all 1.5s;
+        }
+        .phoneBorder {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            border-radius: 20px;
+        }
+        .phoneScreen {
+            position: absolute;
+            width: 98%;
+            height: 98.5%;
+            background-color: black;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .powerBTNHit {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: -1;
+            width: 15%;
+            height: 15%;
+            right: -15%;
+            top: 10%;
+        }
+        .powerBTNClick {
+            position: absolute;
+            width: 8%;
+            height: 60%;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            color: transparent;
+            background-color: black;
+        }
+
+        .louderBTNHit {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: -1;
+            width: 15%;
+            height: 15%;
+            left: -15%;
+            top: 10%;
+        }
+        .louderBTNClick {
+            position: absolute;
+            width: 8%;
+            height: 60%;
+            right: 0;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            color: transparent;
+            background-color: black;
+        }
+
+        .quietBTNHit {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: -1;
+            width: 15%;
+            height: 15%;
+            left: -15%;
+            top: 25%;
+        }
+        .quietBTNClick {
+            position: absolute;
+            width: 8%;
+            height: 60%;
+            right: 0;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            color: transparent;
+            background-color: black;
+        }
+
+        .VolumeCont {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateX(-50%) translateY(-200%);
+            left: 50%;
+            top: 1%;
+            width: 50%;
+            height: 8%;
+            background-color: rgba(121, 121, 121, 0.7);
+            border-radius: 10px;
+            z-index: 100;
+        }
+        .Volume {
+            position: absolute;
+            display: flex;
+            justify-content: start;
+            width: 70%;
+            height: 8px;
+            border-radius: 20px;
+            background-color: gray;
+        }
+        .VolumeValue {
+            position: absolute;
+            transition: all 0.05s;
+            height: 100%;
+            width: 50%;
+            border-radius: 20px;
+            background-color: white;
+        }
+
+        .welcomeScreen {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background-color: #797979;
+            width: 100%;
+            height: 100%;
+        }
+        .WelcomeText {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: all 2s linear;
+            background-color: #292929;
+            width: 0%;
+            height: 0%;
+            border-radius: 10px;
+        }
+        .WelInText {
+            position: absolute;
+            color: white;
+            transition: all 4s;
+            opacity: 0;
+        }
+
+        .LockScreen {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-image: url('Lockscreen.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: all 0.5s;
+            cursor: pointer;
+        }
+
+        .PhoneCur {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            background-color: rgba(121, 121, 121, 0.7);
+            top: 10%;
+            width: 50%;
+            height: 20%;
+            border-radius: 10px;
+        }
+        .PhoneTime {
+            padding: 0;
+            margin: 0;
+        }
+        .HomeScreen {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            color: white;
+            transition: transform 0.3s ease;
+            background-image: url('Homescreen.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .AppCont {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .AppCont {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(5, auto);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .AppCont {
+                grid-template-columns: 1fr; 
+                grid-template-rows: repeat(5, auto);
+            }
+        }
+        .AppHit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 85px;
+            height: 85px;
+            background-color: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .AppIcon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            top: 0px;
+            object-fit: contain;
+        }
+        .AppTitle {
+            position: relative;
+            bottom: 0px;
+            margin: 0%;
+            padding: 0%;
+            filter: drop-shadow(black 2px 2px 2px);
+        }
+        .grid-container {
+            position: absolute;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            background-color: transparent;
+        }
+        .GridAppSlot {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+        }
+
+        .AppList {
+            position: absolute;
+            display: flex;
+            justify-items: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0%;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            gap: 20px;
+            z-index: 90;
+            background: rgba(65, 65, 65, 0.8);
+            backdrop-filter: saturate(180%) blur(10px);
+            transition: all 0.25s;
+        }
+        .AppOpenedPlace {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            cursor: pointer;
+            gap: 15px;
+            width: 80%;
+            height: 10%;
+            border-radius: 10px;
+            background: rgba(126, 126, 126, 0.8);
+            transition: all 0.25s;
+        }
+        .AppOpenedIcon {
+            position: absolute;
+            width: 5vh;
+            height: 5vh;
+            border-radius: 10px;
+            left: 5px;
+        }
+        .AppOpTitle {
+            position: absolute;
+            left: 100px;
+            margin: 0%;
+            padding: 0%;
+            color: white;
+        }
+        .CloseApp {
+            position: absolute;
+            width: 5vh;
+            height: 5vh;
+            border-radius: 10px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
+        .CloseX {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .CloseA {
+            position: absolute;
+        }
+        .OpenHitbox {
+            position: absolute;
+            height: 100%;
+            width: 80%;
+            left: 0;
+        }
+        .CloseHitbox {
+            position: absolute;
+            height: 100%;
+            width: 20%;
+            right: 0;
+        }
+        
+
+        .AppPage {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+            justify-items: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+            background-color: transparent;
+        }
+        .TimeWidget {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 15px;
+        }
+
+        .installedApp {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: -3;
+            flex-direction: column;
+        }
+        .browser {
+            width: 100%;
+            height: 100%;
+            background-color: red;
+            border-radius: 10px;
+        }
+
+        .ControlBar {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 8%;
+            bottom: 0;
+            background-color: rgba(97, 97, 97, 0.7);
+            z-index: 110;
+        }
+        .HomeBTN, .OpenedAppsBTN, .openMenuBTN {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            color: white;
+            background-color: #292929;
+            margin: 0%;
+            padding: 0%;
+            cursor: pointer;
+            text-size-adjust: 200%;
+            transition: all 0.25s;
+            box-shadow: black 4px 4px 4px;
+        }
+        .OpenedAppsBTN {
+            left: 25%;
+            transform: translateX(-50%);
+        }
+        .openMenuBTN {
+            right: 25%;
+            transform: translateX(50%);
+        }
+        .Icon {
+            width: 50%;
+            height: 50%;
+            filter: invert(1);
+        }
+        .HomeIcon {
+            width: 60%;
+            height: 60%;
+        }
+
+        .navbar {
+            position: absolute;
+            display: none;
+            justify-content: end;
+            align-items: center;
+            color: white;
+            width: 100%;
+            height: 2.5%;
+        }
+        .navTime {
+            filter: drop-shadow(black 2px 2px 2px);
+            padding-right: 10px;
+        }
+
+        .MenuFunc {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(500%) translateX(-50%);
+            transition: all 0.5s;
+            left: 50%;
+            top: 50%;
+            width: 15vh;
+            height: 15vh;
+            border-radius: 50%;
+            background-color: #292929;
+        }
+        .MenuFuncSpace {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 15%;
+            height: 15%;
+        }
+        .MenuFuncVis {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 15vh;
+            height: 15vh;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: #292929;
+            transition: all 0.25s;
+            filter: drop-shadow(black 8px 8px 8px);
+        }
+        .FuncSpace {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 5vh;
+            height: 5vh;
+            border-radius: 50%;
+            z-index: -1;
+            color: white;
+            transition: all 0.25s;
+            filter: drop-shadow(black 4px 4px 4px);
+        }
+        .Func {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .InterIcon {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            filter: invert(100%);
+        }
+        .pl {
+            margin: auto;
+            position: relative;
+            width: 8em;
+            height: 8em;
+        }
+        .pl:before,.pl:after {
+            animation: pl-before 2.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+            background-color: currentColor;
+            content: "";
+            display: block;
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            width: 25%;
+            height: 25%;
+            transform-origin: 100% 100%;
+        }
+        .pl:after {
+            animation-name: pl-after;
+        }
+        @keyframes pl-before {
+            from {
+                transform: rotate(0) translate(-100%, -100%) rotate(-90deg);
+            }
+            20% {
+                transform: rotate(0) translate(-100%, -100%) rotate(90deg);
+            }
+            40% {
+                transform: rotate(0) translate(-300%, -100%) rotate(90deg);
+            }
+            60% {
+                transform: rotate(90deg) translate(-300%, -100%) rotate(-90deg);
+            }
+            80% {
+                transform: rotate(90deg) translate(-100%, -100%) rotate(-90deg);
+            }
+            to {
+                transform: rotate(90deg) translate(-100%, 100%) rotate(90deg);
+            }
+        }
+        @keyframes pl-after {
+            from,20% {
+                transform: rotate(0) scale(1, 1);
+            }
+            40% {
+                transform: rotate(0) scale(3, 1);
+            }
+            60% {
+                transform: rotate(90deg) scale(3, 1);
+            }
+            80% {
+                transform: rotate(90deg) scale(1, 1);
+            }
+            to {
+                transform: rotate(90deg) scale(1, 1) translate(0, 200%);
+            }
+        }
+
+
+        #SettingsApp {
+            background-color: gray;
+        }
+        .loader7{
+            position: relative;
+            width: 40px;
+            height: 40px;
+            top: 40%;
+            top: -webkit-calc(50% - 20px);
+            top: calc(50% - 20px);
+            left: 43%;
+            left: -webkit-calc(50% - 20px);
+            left: calc(50% - 20px);
+            background-color: #ffffff33;
+        }
+        .loader7:before{
+            content: "";
+            position: absolute;
+            background-color: #fff;
+            height: 10px;
+            width: 10px;
+            border-radius: 10px;
+            -webkit-animation: loader7 2s ease-in-out infinite;
+            animation: loader7 2s ease-in-out infinite;
+        }
+        .loader7:after{
+            content: "";
+            position: absolute;
+            background-color: #fff;
+            top: 0px;
+            left: 0px;
+            height: 40px;
+            width: 0px;
+            z-index: 0;
+            opacity: 1;
+            -webkit-animation: loader72 10s ease-in-out infinite;
+            animation: loader72 10s ease-in-out infinite;
+        }
+        @-webkit-keyframes loader7{
+            0%{left: -12px; top: -12px;}
+            25%{left:42px; top:-12px;}
+            50%{left: 42px; top: 42px;}
+            75%{left: -12px; top: 42px;}
+            100%{left:-12px; top:-12px;}
+        }
+        @keyframes loader7{
+            0%{left: -12px; top: -12px;}
+            25%{left:42px; top:-12px;}
+            50%{left: 42px; top: 42px;}
+            75%{left: -12px; top: 42px;}
+            100%{left:-12px; top:-12px;}
+        }
+        @-webkit-keyframes loader72{
+            0%{width: 0px;}
+            70%{width: 40px; opacity: 1;}
+            90%{opacity: 0; width: 40px;}
+            100%{opacity: 0;width: 0px;}
+        }
+        @keyframes loader72{
+            0%{width: 0px;}
+            70%{width: 40px; opacity: 1;}
+            90%{opacity: 0; width: 40px;}
+            100%{opacity: 0;width: 0px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="phoneBody">
+        <div class="phoneBorder">
+            <div class="phoneScreen">
+
+                <div class="welcomeScreen">
+                    <p class="WelcomeText">
+                        <h2 class="WelInText">Nebula OS</h2>
+                    </p>
+                </div>
+
+                <div class="HomeScreen">
+                    <div class="AppCont"></div>
+                    
+                </div>
+
+                <div class="installedApp" id="browserApp">
+                    <h1>Browser</h1>
+                    <div class="pl"></div>
+                </div>
+
+                <div class="installedApp" id="SettingsApp">
+                    <h1>Settings</h1>
+                    <div class="container">
+                        <div class="box">
+                            <div class="loader7"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ControlBar">
+                    <h1 class="HomeBTN" onclick="HomePage()">
+                        <svg class="Icon HomeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>
+                    </h1>
+                    <div class="OpenedAppsBTN" onclick="openOpenedAppsList()">
+                        <svg class="Icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M432 48L208 48c-17.7 0-32 14.3-32 32l0 16-48 0 0-16c0-44.2 35.8-80 80-80L432 0c44.2 0 80 35.8 80 80l0 224c0 44.2-35.8 80-80 80l-16 0 0-48 16 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16l256 0c8.8 0 16-7.2 16-16l0-192L48 256l0 192zM64 128l256 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192c0-35.3 28.7-64 64-64z"/></svg>
+                    </div>
+                    <div class="openMenuBTN" onclick="openMenuFunc()">
+                        <svg class="Icon MenuIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/></svg>
+                    </div>
+                </div>
+
+                <div class="navbar">
+                    <h4 class="PhoneTime navTime">Time</h4>
+                </div>
+
+                <div class="LockScreen">
+                    <div class="PhoneCur">
+                        <h1 class="PhoneTime">Time</h1>
+                        <p class="PhoneDate">Date</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="powerBTNHit" onclick="turnPower()">
+            <div class="powerBTNClick">.</div>
+        </div>
+
+        <div class="louderBTNHit" onclick="turnVolume('louder')">
+            <div class="louderBTNClick">.</div>
+        </div>
+
+        <div class="quietBTNHit" onclick="turnVolume('quiet')">
+            <div class="quietBTNClick">.</div>
+        </div>
+    </div>
+
+    <script src="node_modules/eruda/eruda.js"></script>
+    <script>eruda.init();</script>
+
+    <script>
+
+        const Color = [
+        'blue', 'red', 'green', 'lime', 'purple', 'magenta', 'turquoise', 'orange',
+        'maroon', 'navy', 'teal', 'aqua', 'fuchsia', 'gold', 'coral',
+        'indigo', 'lavender', 'pink', 'salmon', 'violet'
+        ];
+        let AppIds = [];
+        let Apps = [];
+        let openedApps = [];
+        let Funktionen = [];
+        let curOpen = '';
+        let isSwiping = false;
+        let startX = 0;
+        let currentX = 0;
+        let WidgetId = 0;
+        let CurFuncPage = 1;
+        let Volume = 50;
+        let BTNCool = 0;
+        let VolumeCool = 0;
+        let currentPage = 0;
+        let power = false;
+        let Initialised = false;
+        let AppListOpened = false;
+
+        let FuncIds = [];
+        let FuncDelay = 100;
+        let FuncOpenDelay = 0;
+        let FuncExpanded = false;
+        let MenuFuncOpened = false;
+        let AlreadyTurned = false;
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        const numRows = 5;
+        const numCols = 3;
+        const appsPerPage = 15;
+
+
+        function createGridContainer() {
+            const gridContainer = document.createElement('div');
+            gridContainer.classList.add('grid-container');
+            let GridSlotId = 1;
+
+            for (let row = 0; row < numRows; row++) {
+                for (let col = 0; col < numCols; col++) {
+                    const gridItem = document.createElement('div');
+                    gridItem.classList.add('GridAppSlot');
+                    gridItem.classList.add(`GridSlot${GridSlotId}`);
+                    gridItem.dataset.gridId = row * numCols + col + 1;
+                    gridContainer.appendChild(gridItem);
+                    GridSlotId++;
+                }
+            }
+
+            return gridContainer;
+        }
+
+        for (let i = 0; i <= 6; i++) {
+            if (i != 5) {
+                createApp(i, `App${i}`, { title: '', Icon: "", color: Color[getRandomNumber(0, 19)], OpenId: "", special: 'Space', id: '', width: '', height: '' });
+            } else if (i == 5) {
+                createApp(5, '', { title: '', Icon: '', color: 'rgba(121, 121, 121, 0.7)', OpenId: "", special: 'Placeholder', id: 'TimeWidget', width: '70%', height: '25vh' });
+            }
+        }
+
+        createApp(7, 'browserApp', { title: 'Browser', Icon: "AppIcons/Browser.png", color: Color[getRandomNumber(0, 19)], OpenId: "browserApp", special: '', id: '', width: '', height: '' });
+        createApp(8, 'SettingsApp', { title: 'Settings', Icon: "AppIcons/Settings.png", color: Color[getRandomNumber(0, 19)], OpenId: "SettingsApp", special: '', id: '', width: '', height: '' });
+
+        //createApp(17, 'browserApp', { title: 'Browser', Icon: "AppIcons/Browser.png", color: Color[getRandomNumber(0, 19)], OpenId: "browserApp", special: '', id: '', width: '', height: '' });
+
+        function createApp(AppId, Class, data) {
+            if (!AppIds.includes(AppId)) {
+                const AppCont = document.querySelector('.AppCont');
+                Apps.push({ id: Class, datas: [data] });
+                AppIds.push(AppId);
+
+                let CurAppId = parseInt(AppId);
+                let CurApp = Apps.find(app => app.id === Class);
+
+                let AppPage;
+                let newGridContainer = createGridContainer();
+
+                if (Apps.length % appsPerPage === 1 || !Initialised) {
+                    AppPage = document.createElement('div');
+                    AppPage.classList.add('AppPage');
+                    AppCont.appendChild(AppPage);
+                    AppPage.appendChild(newGridContainer);
+                    Initialised = true;
+                } else {
+                    AppPage = AppCont.lastChild;
+                    if (!AppPage.querySelector('.grid-container')) {
+                        AppPage.appendChild(newGridContainer);
+                    } else {
+                        newGridContainer = AppPage.querySelector('.grid-container');
+                    }
+                }
+
+                let AppGrid = AppPage.querySelector(`.GridSlot${AppId % appsPerPage === 0 ? appsPerPage : AppId % appsPerPage}`);
+                if (!AppGrid) {
+                    console.error(`Grid item with ID ${AppId} not found.`);
+                    return;
+                }
+
+                const AppHit = document.createElement('div');
+                AppHit.classList.add('AppHit');
+                AppHit.classList.add('Hitbox');
+                AppGrid.appendChild(AppHit);
+
+                const App = document.createElement('img');
+                App.classList.add('AppIcon');
+                AppHit.appendChild(App);
+
+                const AppTitle = document.createElement('h4');
+                AppTitle.classList.add('AppTitle');
+                AppHit.appendChild(AppTitle);
+
+                CurApp.datas.forEach(data => {
+                    if (data.title != '' && data.special == '') {
+                        AppTitle.innerHTML = data.title;
+                        App.src = data.Icon;
+                        App.alt = data.title;
+                        //AppHit.style.backgroundColor = data.color;
+                        AppHit.onclick = function () { openApp(data.OpenId); };
+                    }
+
+                    if (data.special == 'Placeholder' && data.OpenId == '') {
+                        App.style.display = 'none';
+
+                        WidgetId++;
+                        const PlaceApp = document.createElement('div');
+                        PlaceApp.classList.add(`Widget${WidgetId}`);
+                        PlaceApp.classList.add(data.id);
+                        PlaceApp.style.width = data.width;
+                        PlaceApp.style.height = data.height;
+                        PlaceApp.style.backgroundColor = data.color;
+                        AppGrid.appendChild(PlaceApp);
+
+                        if (data.id == 'TimeWidget') {
+                            createWidget('Time');
+                        }
+                    }
+
+                    if (data.special == 'Space' && data.OpenId == '') {
+                        App.style.display = 'none';
+                        AppTitle.style.display = 'none';
+                    }
+
+                    if (data.special == 'Debug' && data.OpenId == '') {
+                        AppTitle.innerHTML = data.title;
+                        AppHit.backgroundColor = data.color;
+                    }
+                });
+            }
+        }
+
+        function createWidget(Sort) {
+            if (Sort == 'Time') {
+                const TimeWidget = document.querySelector('.TimeWidget');
+
+                const Time = document.createElement('h1');
+                Time.classList.add('PhoneTime');
+                TimeWidget.appendChild(Time);
+
+                const Date = document.createElement('p');
+                Date.classList.add('PhoneDate');
+                TimeWidget.appendChild(Date);
+            }
+        }
+
+
+        console.log(Apps);
+
+        function openApp(AppId) {
+            if (!openedApps.includes(AppId)) {
+                openedApps.push(AppId);
+            }
+
+            const AppList = document.querySelector('.AppList');
+            const phoneScreen = document.querySelector('.phoneScreen');
+            if (AppList) {
+                AppList.style.display = 'none';
+                phoneScreen.removeChild(AppList);
+                AppListOpened = false;
+            }
+            
+            const CurApp = document.getElementById(AppId);
+            const HomeScreen = document.querySelector('.HomeScreen');
+
+            HomeScreen.style.display = 'none';
+
+            CurApp.style.display = 'flex';
+            CurApp.style.zIndex = '10';
+            curOpen = AppId;
+        }
+
+        function closeApp(AppId) {
+            const index = openedApps.indexOf(AppId);
+
+            if (index > -1) {
+                openedApps.splice(index, 1);
+            }
+
+            const CurApp = document.getElementById(AppId);
+            const HomeScreen = document.querySelector('.HomeScreen');
+            const AppList = document.querySelector('.AppList');
+            const App = document.querySelector(`.App${AppId}`);
+
+            HomeScreen.style.display = 'flex';
+            
+            App.style.transition = 'all 0.25s';
+            App.style.transform = 'translateX(-150%)';
+            setTimeout(() => {
+                App.style.display = 'none';
+                AppList.removeChild(App);
+            }, 250);
+            
+
+            CurApp.style.display = 'none';
+            curOpen = '';
+
+            setTimeout(() => {
+                if (openedApps.length == 0) {
+                    const AppList = document.querySelector('.AppList');
+                    const phoneScreen = document.querySelector('.phoneScreen');
+                    if (AppList) {
+                        AppList.style.display = 'none';
+                        phoneScreen.removeChild(AppList);
+                        AppListOpened = false;
+                    }
+                }
+            }, 250);
+        }
+
+        const AppContainer = document.querySelector('.AppCont');
+        let startY = 0;
+        let currentY = 0;
+
+        AppContainer.addEventListener('touchstart', startSwipe);
+        AppContainer.addEventListener('touchmove', moveSwipe);
+        AppContainer.addEventListener('touchend', endSwipe);
+        AppContainer.addEventListener('touchcancel', endSwipe);
+
+        AppContainer.addEventListener('mousedown', startSwipe);
+        AppContainer.addEventListener('mousemove', moveSwipe);
+        AppContainer.addEventListener('mouseup', endSwipe);
+        AppContainer.addEventListener('mouseleave', endSwipe);
+
+        function startSwipe(e) {
+            isSwiping = true;
+            startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        }
+
+        function moveSwipe(e) {
+            if (isSwiping) {
+                currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const deltaX = currentX - startX;
+                AppContainer.style.transform = `translateX(calc(-${currentPage * 100}% + ${deltaX}px))`;
+            }
+        }
+
+        function endSwipe() {
+            if (isSwiping) {
+                const deltaX = currentX - startX;
+                const deltaY = currentY - startY;
+
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX < -50) {
+                        changePage(1);
+                    } else if (deltaX > 50) {
+                        changePage(-1);
+                    } else {
+                        AppContainer.style.transform = `translateX(-${currentPage * 100}%)`;
+                    }
+                } else {
+                    if (AlreadyTurned) {
+                        if (deltaY > 50) {
+                            changePage(1); 
+                        } else if (deltaY < -50) {
+                            changePage(-1); 
+                        }
+                    }
+                }
+
+                isSwiping = false;
+            }
+        }
+
+        function changePage(direction) {
+            const pages = AppContainer.children.length;
+            const newPage = currentPage + direction;
+
+            if (newPage >= 0 && newPage < pages) {
+                currentPage = newPage;
+                AppContainer.style.transform = `translateX(-${currentPage * 100}%)`;
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') {
+                changePage(1);
+            } else if (e.key === 'ArrowLeft') {
+                changePage(-1);
+            }
+        });
+
+
+        function HomePage() {
+            const HomeBTN = document.querySelector('.HomeBTN');
+            const MenuFunc = document.querySelector('.MenuFunc');
+            const OpenedAppsList = document.querySelector('.AppList');
+            const HomeScreen = document.querySelector('.HomeScreen');
+            const pages = AppContainer.children.length;
+            const newPage = 0;
+
+            HomeBTN.style.boxShadow = 'none';
+
+            setTimeout(() => {
+                HomeBTN.style.boxShadow = 'black 4px 4px 4px';
+            }, 250);
+
+            if (newPage >= 0 && newPage < pages) {
+                currentPage = newPage;
+                AppContainer.style.transform = `translateX(-${currentPage * 100}%)`;
+            }
+
+            openedApps.forEach(e => {
+                const App = document.getElementById(e);
+                App.style.display = 'none';
+            });
+            if (OpenedAppsList) {
+                OpenedAppsList.style.opacity = '0%';
+                setTimeout(() => {
+                    const phoneScreen = document.querySelector('.phoneScreen');
+                    const AppList = document.querySelector('.AppList');
+                    
+                    AppList.style.display = 'none';
+                    phoneScreen.removeChild(AppList);
+                    
+                    AppListOpened = false;
+                }, 250);
+            }
+
+            if (!AlreadyTurned) {
+                if (MenuFuncOpened) {
+                    if (FuncExpanded) {
+                        expandMenuFunc();
+                        setTimeout(() => {
+                            MenuFunc.style.transform = 'translateY(500%) translateX(-50%)';
+                            MenuFuncOpened = false;
+                            FuncExpanded = false;
+                        }, FuncDelay * 8);
+                    } else if (!FuncExpanded) {
+                        MenuFunc.style.transform = 'translateY(500%) translateX(-50%)';
+                        MenuFuncOpened = false;
+                        FuncExpanded = false;
+                    }
+                }
+            } else if (AlreadyTurned) {
+                if (MenuFuncOpened) {
+                    if (FuncExpanded) {
+                        expandMenuFunc();
+                        setTimeout(() => {
+                            MenuFunc.style.transform = 'translateX(500%) translateY(-50%)';
+                            MenuFuncOpened = false;
+                            FuncExpanded = false;
+                        }, FuncDelay * 8);
+                    } else if (!FuncExpanded) {
+                        MenuFunc.style.transform = 'translateX(500%) translateY(-50%)';
+                        MenuFuncOpened = false;
+                        FuncExpanded = false;
+                    }
+                }
+            }
+            curOpen = '';
+            HomeScreen.style.display = 'flex';
+        }
+
+        function openOpenedAppsList() {
+            let OpenedAppsList;
+            const OpenedAppsBTN = document.querySelector('.OpenedAppsBTN');
+            OpenedAppsBTN.style.boxShadow = 'none';
+
+            setTimeout(() => {
+                OpenedAppsBTN.style.boxShadow = 'black 4px 4px 4px';
+            }, 250);
+
+            setTimeout(() => {
+                if (openedApps.length == 0) {
+                    OpenedAppsList.style.filter = 'opacity(0%)';
+                    setTimeout(() => {
+                        const phoneScreen = document.querySelector('.phoneScreen');
+                        const AppList = document.querySelector('.AppList');
+                        
+                        AppList.style.display = 'none';
+                        phoneScreen.removeChild(AppList);
+
+                        AppListOpened = false;
+                    }, 250);
+                }
+            }, 500);
+            if (!AppListOpened) {
+                if (curOpen != '') {
+                    const HomeScreen = document.querySelector('.HomeScreen');
+                    const CurOpenApp = document.getElementById(curOpen);
+                    CurOpenApp.style.display = 'none';
+                    HomeScreen.style.display = 'flex';
+                    curOpen = '';
+                }
+                const phoneScreen = document.querySelector('.phoneScreen');
+                const ControlBar = document.querySelector('.ControlBar');
+
+                if (!phoneScreen || !ControlBar) {
+                    console.error("phoneScreen or ControlBar element not found.");
+                    return;
+                }
+
+                OpenedAppsList = document.createElement('div');
+                OpenedAppsList.classList.add('AppList');
+                OpenedAppsList.style.opacity = '0%';
+                phoneScreen.appendChild(OpenedAppsList);
+                OpenedAppsList.style.opacity = '100%';
+
+                if (!openedApps || !Array.isArray(openedApps)) {
+                    console.error("openedApps is not defined or not an array.");
+                    return;
+                }
+
+                openedApps.forEach(e => {
+                    const AppOp = document.getElementById(e);
+                    if (!AppOp) {
+                        console.warn(`Element with ID ${e} not found.`);
+                        return;
+                    }
+
+                    const AppOpened = document.createElement('div');
+                    AppOpened.classList.add('AppOpenedPlace');
+                    AppOpened.classList.add(`App${e}`);
+                    OpenedAppsList.appendChild(AppOpened);
+
+                    //const CurAppId = parseInt(e);
+                    const CurApp = Apps.find(app => app.id === e);
+
+                    const AppIcon = document.createElement('img');
+                    AppIcon.classList.add('AppOpenedIcon');
+                    AppOpened.appendChild(AppIcon);
+
+                    const AppOpTitle = document.createElement('h3');
+                    AppOpTitle.classList.add('AppOpTitle');
+                    AppOpened.appendChild(AppOpTitle);
+
+                    const CloseApp = document.createElement('div');
+                    CloseApp.classList.add('CloseApp');
+                    CloseApp.innerHTML = '<h1 class="CloseX"><p class="CloseA">X</p></h1>';
+                    CloseApp.onclick = function () { closeApp(data.OpenId); };
+                    AppOpened.appendChild(CloseApp);
+
+                    const OpenHitbox = document.createElement('div');
+                    OpenHitbox.classList.add('OpenHitbox');
+                    OpenHitbox.classList.add('Hitbox');
+                    AppOpened.appendChild(OpenHitbox);
+
+                    const CloseHitbox = document.createElement('div');
+                    CloseHitbox.classList.add('CloseHitbox');
+                    CloseHitbox.classList.add('Hitbox');
+                    AppOpened.appendChild(CloseHitbox);
+
+                    CurApp.datas.forEach(data => {
+                        AppIcon.src = data.Icon;
+                        AppOpTitle.innerHTML = data.title;
+                        OpenHitbox.onclick = function () { openApp(data.OpenId); };
+                        CloseHitbox.onclick = function () { closeApp(data.OpenId); };
+                    });
+                    
+                });
+                AppListOpened = true;
+            } else if (AppListOpened) {
+                const OpenedAppsList = document.querySelector('.AppList');
+                OpenedAppsList.style.opacity = '0%';
+                setTimeout(() => {
+                    const phoneScreen = document.querySelector('.phoneScreen');
+                    const AppList = document.querySelector('.AppList');
+                    
+                    AppList.style.display = 'none';
+                    phoneScreen.removeChild(AppList);
+                    
+                    AppListOpened = false;
+                }, 250);
+            }
+        }
+
+        function loadMenuFunc() {
+            const phoneScreen = document.querySelector('.phoneScreen');
+
+            const MenuFunc = document.createElement('div');
+            MenuFunc.classList.add('MenuFunc');
+            phoneScreen.appendChild(MenuFunc);
+
+            const MenuFuncSpace = document.createElement('div');
+            MenuFuncSpace.classList.add('MenuFuncSpace');
+            MenuFunc.appendChild(MenuFuncSpace);
+
+            const MenuFuncVis = document.createElement('div');
+            MenuFuncVis.innerHTML = '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M200 32L56 32C42.7 32 32 42.7 32 56l0 144c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312l0 144c0 13.3 10.7 24 24 24l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l144 0c13.3 0 24-10.7 24-24l0-144c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2l0-144c0-13.3-10.7-24-24-24L312 32c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/></svg>';
+            MenuFuncVis.classList.add('MenuFuncVis');
+            MenuFuncVis.onclick = function () { expandMenuFunc(); };
+            MenuFuncSpace.appendChild(MenuFuncVis);
+        }
+
+        loadMenuFunc();
+
+        function expandMenuFunc() {
+            const MenuFuncVis = document.querySelector('.MenuFuncVis');
+            MenuFuncVis.style.filter = 'none';
+
+            setTimeout(() => {
+                MenuFuncVis.style.filter = 'drop-shadow(black 8px 8px 8px)';
+            }, 250);
+            if (!FuncExpanded) {
+                FuncIds.forEach(FuncId => {
+                    const Func = document.querySelector(`.FuncSpace${FuncId}`);
+                    let CurFuncId = parseInt(FuncId);
+                    let CurFunc = Funktionen.find(func => func.id === CurFuncId);
+
+                    if (FuncId == 1 || FuncId == 9) {
+                        Func.style.transform = 'translateY(-300%)';
+                    } 
+                    if (FuncId == 2 || FuncId == 10) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateY(-200%) translateX(200%)';
+                        }, FuncDelay * 1);
+                    } 
+                    if (FuncId == 3 || FuncId == 11) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateX(300%)';
+                        }, FuncDelay * 2);
+                    } 
+                    if (FuncId == 4 || FuncId == 12) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateY(200%) translateX(200%)';
+                        }, FuncDelay * 3);
+                    } 
+                    if (FuncId == 5 || FuncId == 13) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateY(300%)';
+                        }, FuncDelay * 4);
+                    } 
+                    if (FuncId == 6 || FuncId == 14) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateY(200%) translateX(-200%)';
+                        }, FuncDelay * 5);
+                    } 
+                    if (FuncId == 7 || FuncId == 15) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateX(-300%)';
+                        }, FuncDelay * 6);
+                    } 
+                    if (FuncId == 8 || FuncId == 16) {
+                        setTimeout(() => {
+                            Func.style.transform = 'translateY(-200%) translateX(-200%)';
+                        }, FuncDelay * 7);
+                    } 
+                });
+                const MenuFuncVis = document.querySelector('.MenuFuncVis');
+                MenuFuncVis.innerHTML = '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M456 224l-144 0c-13.3 0-24-10.7-24-24l0-144c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l40 40L442.3 5.7C446 2 450.9 0 456 0s10 2 13.7 5.7l36.7 36.7C510 46 512 50.9 512 56s-2 10-5.7 13.7L433 143l40 40c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8zm0 64c9.7 0 18.5 5.8 22.2 14.8s1.7 19.3-5.2 26.2l-40 40 73.4 73.4c3.6 3.6 5.7 8.5 5.7 13.7s-2 10-5.7 13.7l-36.7 36.7C466 510 461.1 512 456 512s-10-2-13.7-5.7L369 433l-40 40c-6.9 6.9-17.2 8.9-26.2 5.2s-14.8-12.5-14.8-22.2l0-144c0-13.3 10.7-24 24-24l144 0zm-256 0c13.3 0 24 10.7 24 24l0 144c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-40-40L69.7 506.3C66 510 61.1 512 56 512s-10-2-13.7-5.7L5.7 469.7C2 466 0 461.1 0 456s2-10 5.7-13.7L79 369 39 329c-6.9-6.9-8.9-17.2-5.2-26.2s12.5-14.8 22.2-14.8l144 0zM56 224c-9.7 0-18.5-5.8-22.2-14.8s-1.7-19.3 5.2-26.2l40-40L5.7 69.7C2 66 0 61.1 0 56s2-10 5.7-13.7L42.3 5.7C46 2 50.9 0 56 0s10 2 13.7 5.7L143 79l40-40c6.9-6.9 17.2-8.9 26.2-5.2s14.8 12.5 14.8 22.2l0 144c0 13.3-10.7 24-24 24L56 224z"/></svg>';
+                FuncExpanded = true;
+            } else if (FuncExpanded) {
+                FuncIds.forEach(FuncId => {
+                    setTimeout(() => {
+                        const Func = document.querySelector(`.FuncSpace${FuncId}`);
+                        Func.style.transform = 'translateY(0) translateX(0)';
+                    }, FuncDelay * (FuncId - 1));
+                    
+                });
+                const MenuFuncVis = document.querySelector('.MenuFuncVis');
+                MenuFuncVis.innerHTML = '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M200 32L56 32C42.7 32 32 42.7 32 56l0 144c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312l0 144c0 13.3 10.7 24 24 24l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l144 0c13.3 0 24-10.7 24-24l0-144c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2l0-144c0-13.3-10.7-24-24-24L312 32c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/></svg>';
+                FuncExpanded = false;
+            }
+        }
+
+        const functions = {
+            Turn: function() {
+                const phone = document.querySelector('.phoneBody');
+                if (!AlreadyTurned) {
+                    phone.style.transformOrigin = '50% 50%'; 
+                    phone.style.transform = 'translateY(-50%) rotate(-90deg)'; 
+                    AlreadyTurned = true;
+                } else {
+                    phone.style.transformOrigin = '50% 50%'; 
+                    phone.style.transform = 'translateY(-50%) rotate(0deg)';
+                    AlreadyTurned = false;
+                }
+            }, 
+            turnRight: function() {
+                const CurPage = document.querySelectorAll(`.FuncSpacePage${CurFuncPage}`);
+                let nextFuncPage = CurFuncPage + 1;
+                const NextFuncPage = document.querySelectorAll(`.FuncSpacePage${nextFuncPage}`);
+                if (NextFuncPage && FuncIds.length == (nextFuncPage * 8)) {
+                    CurFuncPage += 1;
+                    CurPage.forEach(e => {
+                        e.style.display = 'none';
+                    });
+                    NextFuncPage.forEach(e => {
+                        e.style.display = 'flex';
+                    });
+                }
+            }, 
+            turnLeft: function() {
+                const CurPage = document.querySelectorAll(`.FuncSpacePage${CurFuncPage}`);
+                let nextFuncPage = CurFuncPage - 1;
+                const NextFuncPage = document.querySelectorAll(`.FuncSpacePage${nextFuncPage}`);
+                if (NextFuncPage && nextFuncPage >= 1) {
+                    CurFuncPage -= 1;
+                    CurPage.forEach(e => {
+                        e.style.display = 'none';
+                    });
+                    NextFuncPage.forEach(e => {
+                        e.style.display = 'flex';
+                    });
+                }
+            }, 
+            None: function() {
+                
+            }
+        };
+
+        createMenuFunc(1, { title: '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M125.7 160l50.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L48 224c-17.7 0-32-14.3-32-32L16 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"/></svg>', 
+        color: 'turquoise', Func: "Turn"});
+        createMenuFunc(2, { title: '2', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(3, { title: '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>', 
+        color: Color[getRandomNumber(0, 19)], Func: "turnRight"});
+        createMenuFunc(4, { title: '4', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(5, { title: '5', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(6, { title: '6', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(7, { title: '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>', 
+        color: Color[getRandomNumber(0, 19)], Func: "turnLeft"});
+        createMenuFunc(8, { title: '8', color: Color[getRandomNumber(0, 19)], Func: "None"});
+
+        createMenuFunc(9, { title: '9', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(10, { title: '10', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(11, { title: '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>', 
+        color: Color[getRandomNumber(0, 19)], Func: "turnRight"});
+        createMenuFunc(12, { title: '12', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(13, { title: '13', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(14, { title: '14', color: Color[getRandomNumber(0, 19)], Func: "None"});
+        createMenuFunc(15, { title: '<svg class="InterIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>', 
+        color: Color[getRandomNumber(0, 19)], Func: "turnLeft"});
+        createMenuFunc(16, { title: '16', color: Color[getRandomNumber(0, 19)], Func: "None"});
+
+        console.log(Funktionen);
+
+        function createMenuFunc(FuncId, data) {
+            if (FuncId <= 8) {
+                FuncOpenDelay += 0.3;
+                Funktionen.push({ id: FuncId, datas: [data] });
+
+                const MenuFuncSpace = document.querySelector('.MenuFuncSpace');
+
+                let CurFuncId = parseInt(FuncId);
+                FuncIds.push(CurFuncId);
+                let CurFunc = Funktionen.find(func => func.id === CurFuncId);
+
+                const FuncSpace = document.createElement('div');
+                FuncSpace.classList.add('FuncSpace');
+                FuncSpace.classList.add(`FuncSpace${FuncId}`);
+                FuncSpace.classList.add(`FuncSpacePage${CurFuncPage}`);
+                FuncSpace.style.transition = `all 0.3s`;
+                MenuFuncSpace.appendChild(FuncSpace);
+
+                const Func = document.createElement('div');
+                Func.classList.add('Func');
+                Func.classList.add(`Func${FuncId}`);
+                Func.style.transition = `all 0.3s`;
+                FuncSpace.appendChild(Func);
+
+                CurFunc.datas.forEach(data => {
+                    FuncSpace.style.backgroundColor = data.color;
+                    Func.innerHTML = data.title;
+                    Func.onclick = function () { addFuncToFunc(data.Func); };
+                });
+                if (FuncId == 8) {
+                    FuncOpenDelay == 0;
+                }
+            } else if (16 >= FuncId && FuncId > 8) {
+                if (CurFuncPage == 1) {
+                    CurFuncPage++;
+                }
+                FuncOpenDelay += 0.3;
+                Funktionen.push({ id: FuncId, datas: [data] });
+
+                const MenuFuncSpace = document.querySelector('.MenuFuncSpace');
+
+                let CurFuncId = parseInt(FuncId);
+                FuncIds.push(CurFuncId);
+                let CurFunc = Funktionen.find(func => func.id === CurFuncId);
+
+                const FuncSpace = document.createElement('div');
+                FuncSpace.classList.add('FuncSpace');
+                FuncSpace.classList.add(`FuncSpace${FuncId}`);
+                FuncSpace.classList.add(`FuncSpacePage${CurFuncPage}`);
+                FuncSpace.style.display = 'none';
+                FuncSpace.style.transition = `all 0.3s`;
+                MenuFuncSpace.appendChild(FuncSpace);
+
+                const Func = document.createElement('div');
+                Func.classList.add('Func');
+                Func.classList.add(`Func${FuncId}`);
+                Func.style.transition = `all 0.3s`;
+                FuncSpace.appendChild(Func);
+
+                CurFunc.datas.forEach(data => {
+                    Func.style.backgroundColor = data.color;
+                    Func.innerHTML = data.title;
+                    Func.onclick = function () { addFuncToFunc(data.Func); };
+                });
+                if (FuncId == 16) {
+                    FuncOpenDelay = 0;
+                    CurFuncPage = 1;
+                }
+            }
+        }
+
+        function addFuncToFunc(Function) {
+            const MenuFunc = document.querySelector('.MenuFunc');
+
+            //expandMenuFunc();
+            functions[Function]();
+
+            /*setTimeout(() => {
+                MenuFunc.style.transform = 'translateY(500%) translateX(-50%)';
+                MenuFuncOpened = false;
+                FuncExpanded = false;
+
+            }, FuncDelay * 8);*/
+        }
+
+        function openMenuFunc() {
+            const openMenuBTN = document.querySelector('.openMenuBTN');
+            openMenuBTN.style.boxShadow = 'none';
+
+            setTimeout(() => {
+                openMenuBTN.style.boxShadow = 'black 4px 4px 4px';
+            }, 250);
+            const MenuFunc = document.querySelector('.MenuFunc');
+            if (!AlreadyTurned) {
+                if (!MenuFuncOpened) {
+                    MenuFunc.style.transform = 'translateY(-50%) translateX(-50%)';
+                    MenuFuncOpened = true;
+                } else if (MenuFuncOpened) {
+                    if (FuncExpanded) {
+                        expandMenuFunc();
+                        setTimeout(() => {
+                            MenuFunc.style.transform = 'translateY(500%) translateX(-50%)';
+                            MenuFuncOpened = false;
+                            FuncExpanded = false;
+                        }, FuncDelay * 8);
+                    } else if (!FuncExpanded) {
+                        MenuFunc.style.transform = 'translateY(500%) translateX(-50%)';
+                        MenuFuncOpened = false;
+                        FuncExpanded = false;
+                    }
+                }
+            } else if (AlreadyTurned) {
+                if (!MenuFuncOpened) {
+                    MenuFunc.style.transform = 'translateX(-50%) translateY(-50%)';
+                    MenuFuncOpened = true;
+                } else if (MenuFuncOpened) {
+                    if (FuncExpanded) {
+                        expandMenuFunc();
+                        setTimeout(() => {
+                            MenuFunc.style.transform = 'translateX(500%) translateY(-50%)';
+                            MenuFuncOpened = false;
+                            FuncExpanded = false;
+                        }, FuncDelay * 8);
+                    } else if (!FuncExpanded) {
+                        MenuFunc.style.transform = 'translateX(500%) translateY(-50%)';
+                        MenuFuncOpened = false;
+                        FuncExpanded = false;
+                    }
+                }
+            }
+        }
+
+        function turnPower() {
+            if (BTNCool == 0) {
+                BTNCool = 6;
+                const welcomeScreen = document.querySelector('.welcomeScreen');
+                const welcomeText = document.querySelector('.WelcomeText');
+                const welInText = document.querySelector('.WelInText');
+                const LockScreen = document.querySelector('.LockScreen');
+                const HomeScreen = document.querySelector('.HomeScreen');
+                const ControlBar = document.querySelector('.ControlBar');
+                const OpenedAppsList = document.querySelector('.AppList');
+                const navbar = document.querySelector('.navbar');
+
+                const powerBTN = document.querySelector('.powerBTNHit');
+
+                powerBTN.style.transition = 'all 0.1s linear';
+                powerBTN.style.transform = 'translateX(-5px)';
+                setTimeout(() => {
+                    powerBTN.style.transform = 'translateX(0)';
+                }, 250);
+
+                if (!power) {
+                    welcomeScreen.style.display = 'flex';
+                    setTimeout(() => {
+                        welcomeText.style.width = '50%';
+                        welcomeText.style.height = '30%';
+
+                        setTimeout(() => {
+                            welInText.style.opacity = '100%';
+
+                            welcomeText.style.transform = 'rotate(180deg)';
+
+                            setTimeout(() => {
+                                welcomeScreen.style.display = 'none';
+                                LockScreen.style.display = 'flex';
+                                LockScreen.style.transition = 'all 0s';
+                                LockScreen.style.transform = 'translateY(0%)';
+                                LockScreen.style.transition = 'all 0.5s';
+
+                                LockScreen.onclick = function() {UnlockPhone();};
+                            }, 3000);
+                        }, 2000);
+                    }, 250);
+                    power = true;
+                } else if (power) {
+                    setTimeout(() => {
+                        welcomeScreen.style.display = 'flex';
+                        LockScreen.style.display = 'none';
+                        HomeScreen.style.display = 'none';
+                        ControlBar.style.display = 'none';
+                        navbar.style.display = 'none';
+                        if (OpenedAppsList) {
+                            OpenedAppsList.style.display = 'none';
+                        }
+                        
+
+                        setTimeout(() => {
+                            welInText.style.opacity = '0%';
+
+                            welcomeText.style.transform = 'rotate(0deg)';
+
+                            setTimeout(() => {
+                                welcomeText.style.width = '0%';
+                                welcomeText.style.height = '0%';
+
+                                setTimeout(() => {
+                                    welcomeScreen.style.display = 'none';
+                                }, 2000);
+                            }, 2000);
+                        }, 250);
+                    }, 250);
+                    power = false;
+                }
+            }
+        }
+
+        function turnVolume(ChangeVolume) {
+            const VolumeValue = document.querySelector('.VolumeValue');
+            const VolumeBTN = document.querySelector(`.${ChangeVolume}BTNHit`);
+
+                VolumeBTN.style.transition = 'all 0.1s linear';
+                VolumeBTN.style.transform = 'translateX(5px)';
+                setTimeout(() => {
+                    VolumeBTN.style.transform = 'translateX(0)';
+                }, 250);
+
+                if (ChangeVolume == 'louder' && power && Volume <= 95) {
+                    Volume += 5;
+                } else if (ChangeVolume == 'quiet' && power && Volume >= 5) {
+                    Volume -= 5;
+                }
+                VolumeValue.style.width = `${Volume}%`;
+                showVolume();
+        }
+
+        function CreateVolumeBar() {
+            const Screen = document.querySelector('.phoneScreen');
+            const VolumeCont = document.createElement('div');
+            VolumeCont.classList.add('VolumeCont');
+            Screen.appendChild(VolumeCont);
+
+            const Volume = document.createElement('div');
+            Volume.classList.add('Volume');
+            VolumeCont.appendChild(Volume);
+
+            const VolumeValue = document.createElement('div');
+            VolumeValue.classList.add('VolumeValue');
+            Volume.appendChild(VolumeValue);
+        }
+
+        CreateVolumeBar();
+
+        function showVolume() {
+            if (power) {
+                VolumeCool = 0.5;
+                const Screen = document.querySelector('.phoneScreen');
+                const VolumeCont = document.querySelector('.VolumeCont');
+
+                VolumeCont.style.transition = 'all 0.5s';
+                VolumeCont.style.transform = 'translateY(0) translateX(-50%)';
+            }
+        }
+
+        function VolumeHide() {
+            const VolumeCont = document.querySelector('.VolumeCont');
+
+            if (VolumeCool > 0) {
+                VolumeCool -= 0.01;
+            }
+
+            if (VolumeCool <= 0) {
+                VolumeCont.style.transform = 'translateY(-200%) translateX(-50%)';
+            }
+        }
+        setInterval(VolumeHide, 30);
+
+        function Cooldown() {
+            
+            if (BTNCool > 0) {
+                BTNCool -= 1;
+            }
+        }
+
+        setInterval(Cooldown, 1000);
+
+        function UnlockPhone() {
+            const navbar = document.querySelector('.navbar');
+            const ControlBar = document.querySelector('.ControlBar');
+            const LockScreen = document.querySelector('.LockScreen');
+            const HomeScreen = document.querySelector('.HomeScreen');
+
+            navbar.style.display = 'flex';
+            ControlBar.style.display = 'flex';
+            HomeScreen.style.display = 'flex';
+            LockScreen.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                LockScreen.style.display = 'none';
+            }, 500);
+        }
+
+        function padZero(value) {
+            return value < 10 ? '0' + value : value;
+        }
+
+        function PhoneTime() {
+            const days = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+            const time = document.querySelectorAll('.PhoneTime');
+            const date = document.querySelectorAll('.PhoneDate');
+
+            const d_login = new Date();
+            const year = d_login.getFullYear();
+
+            let day_day = days[d_login.getDay()];
+            const month = padZero(d_login.getMonth() + 1);
+            const day = padZero(d_login.getDate());
+            const hour = padZero(d_login.getHours());
+            const minute = padZero(d_login.getMinutes());
+
+            date.forEach(e => {
+                e.innerHTML = `${day_day}  ${day}.${month}.${year}`;
+            });
+            time.forEach(e => {
+                e.innerHTML = `${hour}:${minute}`;
+            });
+            
+        }
+
+        setInterval(PhoneTime, 30);
+    </script>
+</body>
+</html>
