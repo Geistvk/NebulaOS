@@ -1,14 +1,14 @@
-🌌 NebulaOS
+#🌌 NebulaOS
 
 NebulaOS ist ein modernes, modulares Betriebssystem-Konzept mit Fokus auf Geschwindigkeit, Flexibilität und plattformübergreifende Nutzung. Es kombiniert Prinzipien klassischer Betriebssysteme mit webbasierten Technologien und einer minimalistischen Architektur, um eine skalierbare und leistungsfähige Umgebung für verschiedenste Anwendungen bereitzustellen.
 
-🚀 Overview
+#🚀 Overview
 
 NebulaOS wurde entwickelt, um die Einschränkungen traditioneller Betriebssysteme zu überwinden und eine einheitliche Plattform für Desktop-, Web- und Cloud-Anwendungen bereitzustellen.
 
 Der Kern des Systems basiert auf einer modularen Architektur, die es ermöglicht, nur die benötigten Komponenten zu laden und somit Ressourcen effizient zu nutzen – ein Ansatz, der auch in modernen OS-Designs üblich ist .
 
-🧠 Core Concepts
+#🧠 Core Concepts
 1. Modular Architecture
 
 NebulaOS folgt einem komponentenbasierten Aufbau:
@@ -37,7 +37,7 @@ Reaktionsschnelle UI
 Klare API-Strukturen
 Erweiterbare Systemarchitektur
 Open-Source-orientierter Workflow
-⚙️ Features
+#⚙️ Features
 🧩 Modulares Systemdesign
 ⚡ Hohe Performance & geringe Latenz
 🌐 Cross-Platform Support
@@ -79,7 +79,7 @@ npm run start
 
 ⚠️ Hinweis: Die tatsächlichen Installationsschritte können je nach Projektstruktur variieren.
 
-🛠️ Development
+#🛠️ Development
 Voraussetzungen:
 Node.js / Runtime (falls Web-basiert)
 Git
@@ -94,17 +94,7 @@ Fork das Repository
 Erstelle einen Feature-Branch
 Committe deine Änderungen
 Erstelle einen Pull Request
-📜 License
 
-Dieses Projekt steht unter der MIT License (oder entsprechend anpassen).
-
-🌍 Vision
-
-NebulaOS verfolgt das Ziel, eine flexible, schnelle und universelle Computing-Plattform zu schaffen, die sich an moderne Anforderungen wie Cloud, Dezentralisierung und plattformübergreifende Nutzung anpasst.
-
-📫 Contact
-Website: http://zvx-projects.com/dev/NebulaOS/
-GitHub: (dein Repo hier)
-⭐ Credits
+#⭐ Credits
 
 Developed by ZVX Projects
